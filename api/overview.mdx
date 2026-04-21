@@ -1,0 +1,67 @@
+---
+title: "AutoZone ITLA REST API — base URL and conventions"
+description: "The AutoZone ITLA API is a REST API hosted at taller-itla.ia3x.com. All POST requests use a datax form-encoded convention. Only GET and POST methods are used."
+---
+
+The AutoZone ITLA API powers the mobile app with a clean REST interface. All data lives at `https://taller-itla.ia3x.com/api` and follows a consistent request/response convention across every endpoint.
+
+## Base URL
+
+```
+https://taller-itla.ia3x.com/api
+```
+
+## Request conventions
+
+The API uses only **GET** and **POST** methods. POST requests follow a special `datax` convention:
+
+- All JSON parameters are serialized into a string and sent as a `datax` field via `application/x-www-form-urlencoded` or `multipart/form-data`
+- File uploads (photos) use `multipart/form-data` with `datax` for JSON fields and separate fields for each file
+
+```bash Example POST request
+curl -X POST https://taller-itla.ia3x.com/api/auth/login \
+  -d 'datax={"matricula":"20240096","contrasena":"miClave123"}'
+```
+
+<Warning>
+Do not send raw JSON as the request body. Always wrap your JSON payload in the `datax` form field.
+</Warning>
+
+## Response format
+
+All responses return JSON with a consistent envelope:
+
+```json
+{
+  "success": true,
+  "message": "Operacion exitosa",
+  "data": { ... }
+}
+```
+
+On error, `success` is `false` and `message` describes what went wrong.
+
+## Authentication
+
+Protected endpoints require a Bearer token in the `Authorization` header:
+
+```
+Authorization: Bearer YOUR_TOKEN
+```
+
+Obtain your token by completing the [registration and activation flow](/getting-started/authentication) or by calling `POST /auth/login`. See [API Authentication](/api/authentication) for full details.
+
+## Photo uploads
+
+Images submitted through the API are automatically compressed to a maximum of 100 KB server-side. You can send images up to 20 MB — the server handles optimization.
+
+## Public vs. protected endpoints
+
+<CardGroup cols={2}>
+  <Card title="Public endpoints" icon="globe">
+    `/auth/*`, `/publico/foro`, `/noticias`, `/videos`, `/catalogo` — no token required
+  </Card>
+  <Card title="Protected endpoints" icon="lock">
+    `/vehiculos`, `/mantenimientos`, `/combustible`, `/gomas`, `/gastos`, `/ingresos`, `/perfil`, `/foro` — Bearer token required
+  </Card>
+</CardGroup>

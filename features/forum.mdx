@@ -1,0 +1,64 @@
+---
+title: "Browse and post in the AutoZone ITLA community forum"
+description: "Browse open topics and vehicle discussions without an account, or sign in to create your own topics and reply to other members of the community."
+---
+
+The community forum is a shared space where AutoZone ITLA users ask questions, share experiences, and help each other with vehicle issues. Anyone can read every topic and its replies without an account. To start a new topic or leave a reply, you need to sign in.
+
+## Browsing topics
+
+The **Foro Comunitario** screen lists all open topics as soon as you open it — no login required. Each row shows:
+
+| Field | Description |
+|---|---|
+| `vehiculoFoto` | The vehicle photo as the topic's avatar, or a car icon if no photo has been uploaded |
+| `titulo` | The topic title in bold |
+| `autor` | The member who started the topic |
+| `vehiculo` | The make and model of the associated vehicle |
+| `fecha` | When the topic was posted |
+| `totalRespuestas` | The number of replies, shown in the trailing column |
+
+Pull down the list to refresh it at any time.
+
+## Reading a topic
+
+Tap any row to open the topic detail view. The detail screen shows the original post — `titulo`, `descripcion`, `autor`, and `fecha` — followed by all replies. Each reply (`ForoRespuesta`) displays:
+
+- `autor` — the replying member's name
+- `contenido` — the reply text
+- `fecha` — when the reply was posted
+
+Avatars are color-coded by member name so you can quickly tell contributors apart.
+
+## Creating a topic
+
+<Steps>
+  <Step title="Sign in">
+    Tap the account icon and log in with your ITLA matricula and password. Once authenticated, a **+** button and a floating action button appear on the forum list screen.
+  </Step>
+  <Step title="Select a vehicle">
+    On the **Crear Consulta** screen, choose a vehicle from the **Vehículo** dropdown. Vehicles that already have a photo show a green checkmark; those without a photo show an orange warning icon.
+  </Step>
+  <Step title="Write your topic">
+    Fill in the **Título** field with your question and the **Descripción** field with the full context. Both fields are required.
+  </Step>
+  <Step title="Publish">
+    Tap **Publicar en el Foro**. The topic is submitted with `vehiculo_id`, `titulo`, and `descripcion`, and it appears in the list immediately.
+  </Step>
+</Steps>
+
+<Note>
+  Your vehicle must have a photo before you can create a forum topic. If the selected vehicle has no photo, go to **Mis Vehículos**, open that vehicle's detail screen, and upload a photo using the camera icon. Then return to the forum to create your topic.
+</Note>
+
+## Replying to a topic
+
+Open any topic and, when you are signed in, a text input appears at the bottom of the screen. Type your reply in the **Escribe una respuesta…** field and tap the send icon. Your reply is posted as a `ForoRespuesta` with your `autor` name and is visible to all readers immediately.
+
+## My topics
+
+The **Mis Temas** view shows only the topics you have started. It loads from the `/foro/mis-temas` endpoint and displays the same `ForoTema` fields as the main list — useful for tracking activity and following up on your own questions.
+
+<Tip>
+  You can reach Mis Temas from the forum menu after signing in. The list refreshes automatically when you create a new topic.
+</Tip>

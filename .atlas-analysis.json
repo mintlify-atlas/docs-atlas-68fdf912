@@ -1,0 +1,119 @@
+{
+  "projectType": "saas",
+  "projectName": "AutoZone ITLA",
+  "projectDescription": "A Flutter mobile app for comprehensive vehicle management — track maintenance, fuel, tires, expenses, and more, backed by a REST API.",
+  "theme": "almond",
+  "primaryColor": "#D32F2F",
+  "lightColor": "#FFCDD2",
+  "darkColor": "#B71C1C",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "getting-started/setup",
+              "getting-started/authentication"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/vehicles",
+              "features/maintenance",
+              "features/fuel-and-oil",
+              "features/tires",
+              "features/expenses-income"
+            ]
+          },
+          {
+            "group": "Community & Content",
+            "pages": [
+              "features/forum",
+              "features/news",
+              "features/videos",
+              "features/catalog"
+            ]
+          },
+          {
+            "group": "Account",
+            "pages": [
+              "features/profile",
+              "features/about"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/authentication"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/vehicles",
+              "api/maintenance",
+              "api/fuel",
+              "api/tires",
+              "api/expenses",
+              "api/forum",
+              "api/news-videos-catalog"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Vehicle registration with photo, plate, chassis, make, model, and year",
+    "Maintenance tracking with multi-photo uploads and cost breakdown",
+    "Fuel and oil log with quantity, unit (gallons/liters/qt), and amount in RD$",
+    "Tire status management per position with puncture incident reporting",
+    "Expense and income tracking by category with paginated listing",
+    "Community forum with public read access and authenticated posting",
+    "Automotive news feed with HTML article detail view",
+    "YouTube educational video gallery with in-app playback",
+    "Vehicle catalog with search by make, model, year, and price range",
+    "Secure JWT authentication with refresh token flow and account activation"
+  ],
+  "publicApiSurface": [
+    "POST /auth/registro — Register with ITLA student ID",
+    "POST /auth/activar — Activate account with temporary token + password",
+    "POST /auth/login — Login, receive token + refreshToken",
+    "POST /auth/refresh — Renew access token",
+    "POST /auth/olvidar — Reset forgotten password",
+    "GET /vehiculos — List user vehicles (paginated, filterable)",
+    "POST /vehiculos — Create vehicle with optional photo",
+    "GET /vehiculos/detalle?id= — Vehicle detail with financial summary",
+    "POST /vehiculos/editar — Edit vehicle data",
+    "POST /vehiculos/foto — Update vehicle photo",
+    "GET/POST /mantenimientos — List and create maintenance records",
+    "GET/POST /combustible — List and log fuel/oil entries",
+    "GET /gomas?vehiculo_id= — Get tire states",
+    "POST /gomas/actualizar — Update tire status",
+    "POST /gomas/pinchazos — Record puncture",
+    "GET/POST /gastos — List and create expenses",
+    "GET/POST /ingresos — List and create income",
+    "GET /gastos/categorias — Expense categories",
+    "GET /publico/foro — Public forum topics",
+    "GET /publico/foro/detalle?id= — Forum topic with replies",
+    "POST /foro/crear — Create forum topic",
+    "POST /foro/responder — Reply to forum topic",
+    "GET /noticias — Latest automotive news",
+    "GET /noticias/detalle?id= — News article detail",
+    "GET /videos — Educational YouTube video list",
+    "GET /catalogo — Vehicle catalog with filters",
+    "GET /catalogo/detalle?id= — Catalog vehicle detail",
+    "GET /perfil — User profile",
+    "POST /perfil/foto — Update profile photo"
+  ]
+}

@@ -1,0 +1,43 @@
+---
+title: "Stay current with automotive news in AutoZone ITLA"
+description: "Read the latest Dominican automotive news directly in the app — no login required. Each article loads with its full HTML content in a built-in web view."
+---
+
+The **Noticias Automotrices** section keeps you up to date with what is happening in the Dominican automotive world. The app fetches the latest articles from the server and displays them in a scrollable list. No account is required to read any article.
+
+## News list
+
+The list shows up to 10 articles, ordered by recency. Each card displays:
+
+| Field | Description |
+|---|---|
+| `imagenUrl` | Hero image for the article, displayed full-width at the top of the card |
+| `titulo` | Article headline |
+| `fecha` | Publication date |
+| `resumen` | Short summary shown below the date, up to three lines |
+
+Scroll through the list and tap any card to open the full article.
+
+## Reading an article
+
+Opening a card loads the article detail screen. The screen shows:
+
+<Steps>
+  <Step title="Hero image">
+    The article's `imagenUrl` is displayed at 250 px tall and full width above the content area.
+  </Step>
+  <Step title="Title and date">
+    The `titulo` appears as a large headline below the image, with `fecha` in smaller text beneath it.
+  </Step>
+  <Step title="Full content">
+    When the article has a `contenido` value, it is rendered in a built-in web view using the `webview_flutter` package. This preserves the original HTML formatting, including images, links, and styled text. If no `contenido` is available, the `resumen` is shown as plain text instead.
+  </Step>
+</Steps>
+
+<Note>
+  News content is curated specifically for the Dominican automotive market. Articles cover local regulations, regional vehicle trends, and news relevant to drivers in the Dominican Republic.
+</Note>
+
+<Tip>
+  If an article image fails to load, the app shows a placeholder automatically — the rest of the article still loads normally.
+</Tip>

@@ -1,0 +1,98 @@
+---
+title: "Track vehicle expenses and income in AutoZone ITLA"
+description: "Log categorized expenses like insurance and parking and record earnings from the vehicle, then see totals and a net balance on the vehicle detail screen."
+---
+
+The Expenses & Income section (Gastos e Ingresos) lets you track money flowing in and out of each vehicle separately. Expenses are grouped by category — such as insurance, parking, or fines — while income entries capture any earnings the vehicle generates, identified by a free-text concept. Both lists show a running total at the top and feed directly into the financial summary on the vehicle detail screen.
+
+## Expenses
+
+### What an expense record contains
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `vehiculo_id` | integer | yes | Set automatically from the vehicle context |
+| `categoria` | object | yes | Selected from the categories loaded from the API |
+| `monto` | number | yes | Amount in RD$ |
+| `descripcion` | text | yes | Free-text description of the specific expense |
+| `fecha` | date | yes | Recorded at creation time by the server |
+
+Categories come from the `/gastos/categorias` endpoint and are loaded dynamically — you always see the current list defined in the system (examples include seguros, parking, multas, and similar vehicle-related categories).
+
+### Logging a new expense
+
+Navigate to a vehicle's detail screen, open the **Gastos del Vehículo** screen, then tap the **+** button.
+
+<Steps>
+  <Step title="Select a category">
+    Tap the **Categoría** dropdown. The list loads from the API and shows all available expense categories. Select the one that matches your expense.
+  </Step>
+  <Step title="Enter the amount">
+    Type the total in **Monto (RD$)**. Decimal values are accepted.
+  </Step>
+  <Step title="Add a description">
+    In **Descripción**, provide context for this specific charge — for example, "Pago mensual de seguro todo riesgo" or "Parqueo aeropuerto 3 días".
+  </Step>
+  <Step title="Save the expense">
+    Tap **Registrar Gasto**. The entry is saved and the list refreshes showing the updated total.
+  </Step>
+</Steps>
+
+<Note>
+  If the category list fails to load, the form shows an error message and the save button remains available but will reject a submission without a category selected. Pull down on the Gastos screen to trigger a refresh before trying again.
+</Note>
+
+### Viewing expenses
+
+The Gastos del Vehículo screen shows a **Total Gastos** banner at the top — the sum of all expense amounts in RD$ for that vehicle. Below it, the scrollable list shows each entry with:
+
+- The **category name** as the title
+- The **descripcion** and **fecha** as two subtitle lines
+- The **monto** in red on the right
+
+Pull down to refresh. The total updates automatically.
+
+---
+
+## Income
+
+### What an income record contains
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `vehiculo_id` | integer | yes | Set automatically from the vehicle context |
+| `monto` | number | yes | Amount received in RD$ |
+| `concepto` | text | yes | Description of the income source |
+| `fecha` | date | yes | Recorded at creation time by the server |
+
+Income does not use a fixed category — you describe the source directly in the **Concepto** field (e.g. "Viaje Santo Domingo–Santiago", "Alquiler fin de semana", "Servicio de mudanza").
+
+### Logging a new income entry
+
+Navigate to a vehicle's detail screen, open the **Ingresos del Vehículo** screen, then tap the **+** button.
+
+<Steps>
+  <Step title="Enter the amount">
+    Type the amount received in **Monto (RD$)**.
+  </Step>
+  <Step title="Describe the income">
+    In **Concepto**, write what the money was for. There is no predefined list — write whatever best describes the source of the income.
+  </Step>
+  <Step title="Save the income entry">
+    Tap **Registrar Ingreso**. The entry is saved and the list refreshes with an updated total.
+  </Step>
+</Steps>
+
+### Viewing income
+
+The Ingresos del Vehículo screen mirrors the expenses layout: a **Total Ingresos** banner shows the running total in green at the top, and the list below displays each entry with its **concepto**, **fecha**, and **monto** in green.
+
+---
+
+## Financial summary tie-in
+
+Both the total gastos and total ingresos roll up into the financial summary visible on the vehicle detail screen. The summary shows individual totals for mantenimientos, combustible, and gastos as cost categories, then sets ingresos against all of them to display a net **balance**. A positive balance means your vehicle is earning more than it costs to operate.
+
+<Tip>
+  Log income entries for every trip or job the vehicle completes, not just at the end of the month. Frequent logging gives you an accurate picture of the vehicle's profitability over time.
+</Tip>

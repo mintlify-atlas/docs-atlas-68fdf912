@@ -1,0 +1,78 @@
+---
+title: "Maintenance API — create and list service records"
+description: "List and create vehicle maintenance records with costs, parts, dates, and up to five photos. All endpoints require a Bearer token."
+---
+
+The maintenance endpoints let you log and retrieve service records for a specific vehicle. Each record captures the maintenance type, cost, parts used, date, and up to five photos documenting the work.
+
+<Note>
+All maintenance endpoints require authentication via `Authorization: Bearer YOUR_TOKEN`.
+</Note>
+
+---
+
+## GET /mantenimientos
+
+List maintenance records for a vehicle. Supports filtering by type.
+
+**Query parameters**
+
+<ParamField query="vehiculo_id" type="integer" required>Vehicle ID</ParamField>
+<ParamField query="tipo" type="string">Filter by maintenance type (e.g. `Cambio de aceite`)</ParamField>
+<ParamField query="page" type="integer">Page number</ParamField>
+<ParamField query="limit" type="integer">Items per page</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/mantenimientos?vehiculo_id=5" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of maintenance records
+
+<ResponseField name="id" type="integer">Record ID</ResponseField>
+<ResponseField name="vehiculo_id" type="integer">Associated vehicle</ResponseField>
+<ResponseField name="tipo" type="string">Maintenance type</ResponseField>
+<ResponseField name="costo" type="number">Cost in RD$</ResponseField>
+<ResponseField name="piezas" type="string">Parts used (nullable)</ResponseField>
+<ResponseField name="fecha" type="string">Date of service (ISO 8601)</ResponseField>
+<ResponseField name="fotos" type="array">Array of photo URLs (up to 5)</ResponseField>
+
+---
+
+## POST /mantenimientos
+
+Create a new maintenance record with optional photos.
+
+**Request** (`multipart/form-data`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id":5,"tipo":"Cambio de aceite","costo":1500,"piezas":"Filtro, aceite 5W30","fecha":"2026-04-15"}`
+</ParamField>
+<ParamField body="fotos[]" type="file">Up to 5 photo files</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/mantenimientos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F 'datax={"vehiculo_id":5,"tipo":"Cambio de aceite","costo":1500,"piezas":"Filtro, aceite 5W30","fecha":"2026-04-15"}' \
+  -F "fotos[]=@/path/to/foto1.jpg" \
+  -F "fotos[]=@/path/to/foto2.jpg"
+```
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Record created |
+| `400` | Missing required fields |
+| `401` | Unauthorized |
+
+---
+
+## GET /mantenimientos/:id
+
+Get a single maintenance record with full details and photo gallery.
+
+```bash
+curl https://taller-itla.ia3x.com/api/mantenimientos/42 \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response** includes all fields from the list response plus the full `fotos` array.

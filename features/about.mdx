@@ -1,0 +1,44 @@
+---
+title: "About AutoZone ITLA and the student development team"
+description: "The Acerca De screen lists the students who built AutoZone ITLA with their photos, names, ITLA IDs, phone numbers, Telegram links, and emails."
+---
+
+The Acerca De screen introduces the team behind AutoZone ITLA. It is available to everyone — no login required — and you can reach it from the profile menu by tapping **Acerca De** or through the app's main navigation.
+
+## What the screen shows
+
+The screen is organized into two tabs: **Equipo** and **Mi Perfil**.
+
+The **Equipo** tab lists every member of the development team. Each card includes:
+
+| Field | Description |
+|---|---|
+| **Foto** | A circular photo of the team member (loaded from app assets) |
+| **Nombre y Apellido** | Full name, displayed as the card title |
+| **Matrícula ITLA** | The student's ITLA registration number, shown as a subtitle |
+
+The **Mi Perfil** tab shows your own session info if you are logged in — your photo (`fotoUrl`), full name (`nombre` + `apellido`), `matricula`, and `correo` pulled from `GET /perfil`. If you are not signed in, the tab shows a prompt to log in.
+
+## Team members
+
+The current development team for AutoZone ITLA — Práctica Final, ITLA 2026 Trimestre 1:
+
+| Name | Matrícula |
+|---|---|
+| Emmanuel Hidalgo Perez Ramirez | 2023-1003 |
+| Mark Roberandy Abreu Gomez | 2022-1861 |
+| Victor Junior Maldonado Mejia | 2022-0672 |
+
+## How to get there
+
+<Steps>
+  <Step title="Open Mi Perfil">
+    Tap the profile icon in the bottom navigation bar to go to your profile screen. You do not need to be logged in to access Acerca De, but the profile menu is the most direct path.
+  </Step>
+  <Step title="Tap Acerca De">
+    Scroll down the profile screen and tap the **Acerca De** list item. The app navigates to `/acerca`.
+  </Step>
+  <Step title="Browse the Equipo tab">
+    The Equipo tab loads by default, showing all team member cards with their contact details.
+  </Step>
+</Steps>

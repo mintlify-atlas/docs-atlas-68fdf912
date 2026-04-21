@@ -1,0 +1,115 @@
+---
+title: "Expenses and income API — gastos, ingresos, categorias"
+description: "List and create vehicle expenses by category and income entries. Fetch available categories. All endpoints require a Bearer token."
+---
+
+The expenses and income endpoints track the financial activity around each vehicle beyond maintenance and fuel. Expenses are categorized (insurance, parking, fines, etc.) while income records earnings from the vehicle. Both support paginated listing.
+
+<Note>
+All endpoints require `Authorization: Bearer YOUR_TOKEN`.
+</Note>
+
+---
+
+## GET /gastos/categorias
+
+Retrieve available expense categories to populate a picker in your UI.
+
+```bash
+curl https://taller-itla.ia3x.com/api/gastos/categorias \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of category objects
+
+<ResponseField name="id" type="integer">Category ID</ResponseField>
+<ResponseField name="nombre" type="string">Category name (e.g. Seguros, Parking, Multas)</ResponseField>
+
+---
+
+## GET /gastos
+
+List expense records for a vehicle.
+
+**Query parameters**
+
+<ParamField query="vehiculo_id" type="integer" required>Vehicle ID</ParamField>
+<ParamField query="page" type="integer">Page number</ParamField>
+<ParamField query="limit" type="integer">Items per page</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/gastos?vehiculo_id=5" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of expense objects
+
+<ResponseField name="id" type="integer">Expense ID</ResponseField>
+<ResponseField name="vehiculo_id" type="integer">Associated vehicle</ResponseField>
+<ResponseField name="categoria" type="object">Category object with `id` and `nombre`</ResponseField>
+<ResponseField name="monto" type="number">Amount in RD$</ResponseField>
+<ResponseField name="descripcion" type="string">Optional description</ResponseField>
+<ResponseField name="fecha" type="string">Date (ISO 8601)</ResponseField>
+
+---
+
+## POST /gastos
+
+Create a new expense record.
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id":5,"categoria_id":2,"monto":3500,"descripcion":"SOAT anual","fecha":"2026-01-10"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/gastos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"vehiculo_id":5,"categoria_id":2,"monto":3500,"descripcion":"SOAT anual","fecha":"2026-01-10"}'
+```
+
+---
+
+## GET /ingresos
+
+List income records for a vehicle.
+
+**Query parameters**
+
+<ParamField query="vehiculo_id" type="integer" required>Vehicle ID</ParamField>
+<ParamField query="page" type="integer">Page number</ParamField>
+<ParamField query="limit" type="integer">Items per page</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/ingresos?vehiculo_id=5" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`**
+
+<ResponseField name="id" type="integer">Income record ID</ResponseField>
+<ResponseField name="vehiculo_id" type="integer">Associated vehicle</ResponseField>
+<ResponseField name="monto" type="number">Amount in RD$</ResponseField>
+<ResponseField name="concepto" type="string">Description of the income</ResponseField>
+<ResponseField name="fecha" type="string">Date (ISO 8601)</ResponseField>
+
+---
+
+## POST /ingresos
+
+Create a new income record.
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id":5,"monto":5000,"concepto":"Alquiler del vehiculo","fecha":"2026-04-01"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/ingresos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"vehiculo_id":5,"monto":5000,"concepto":"Alquiler del vehiculo","fecha":"2026-04-01"}'
+```
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Record created |
+| `400` | Missing required fields |
+| `401` | Unauthorized |

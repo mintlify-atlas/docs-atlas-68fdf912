@@ -1,0 +1,65 @@
+---
+title: "Log fuel and oil entries per vehicle in AutoZone ITLA"
+description: "Record every combustible fill-up and aceite change with the quantity, unit of measure, and the amount paid in RD$ for accurate cost tracking."
+---
+
+The Combustible & Aceite section tracks two types of fluid entries for each vehicle: **combustible** (fuel fill-ups at the pump) and **aceite** (oil top-offs or full oil changes). Both entry types share the same form and list view, organized into two tabs so you can see them separately.
+
+## Entry types and their fields
+
+Every combustible or aceite entry stores the following:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `vehiculo_id` | integer | yes | Set automatically from the vehicle you navigate from |
+| `tipo` | string | yes | Either `combustible` or `aceite` |
+| `cantidad` | number | yes | Volume of fluid added |
+| `unidad` | string | yes | Unit of measure — see options below |
+| `monto` | number | yes | Amount paid in RD$ |
+| `fecha` | date | no | Recorded at creation time |
+
+**Unidad options by type:**
+
+- For **combustible**: `galones` or `litros`
+- For **aceite**: `qt` (quarts) or `litros`
+
+## Logging a new entry
+
+Navigate to a vehicle's detail screen, tap **Registros de Combustible**, then tap the **+** button. The form opens on whichever tab is currently active — Combustible or Aceite.
+
+<Steps>
+  <Step title="Choose the entry type">
+    At the top of the form, a segmented button lets you switch between **Combustible** and **Aceite**. Select the one that matches what you are recording. Switching the type also resets the **Unidad** selector to the appropriate default for that type.
+  </Step>
+  <Step title="Enter the quantity">
+    Type a number in **Cantidad**. This is the volume you added — for example, `10` for ten gallons of gasoline, or `4` for four quarts of oil.
+  </Step>
+  <Step title="Select the unit">
+    Choose from the **Unidad** dropdown. For combustible the options are `galones` and `litros`; for aceite the options are `qt` and `litros`.
+  </Step>
+  <Step title="Enter the amount paid">
+    Type the total cost in **Monto (RD$)**. Decimal values are accepted.
+  </Step>
+  <Step title="Save the entry">
+    Tap **Registrar**. The entry is saved and you are returned to the list, which refreshes automatically.
+  </Step>
+</Steps>
+
+## Viewing and filtering entries
+
+The list screen uses two tabs — **Combustible** and **Aceite** — to separate the two entry types. Each tab shows its own scrollable list of records.
+
+Each list item displays:
+- The **cantidad** and **unidad** as the title (e.g. "10.0 galones")
+- The **fecha** as the subtitle
+- The **monto** aligned to the right in RD$ (e.g. "RD$ 850.0")
+
+Pull down on either tab to refresh its records. Tap the **+** button while on the Combustible tab to pre-select `combustible` as the type; tap it from the Aceite tab to pre-select `aceite`.
+
+<Note>
+  The combustible and aceite totals both feed into the financial summary on the vehicle detail screen. They are combined into a single "Combustible" total in the summary view.
+</Note>
+
+<Tip>
+  Log entries immediately after each fill-up or oil change to keep your cost-per-period calculations accurate in the vehicle's financial summary.
+</Tip>

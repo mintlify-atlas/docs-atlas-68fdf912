@@ -1,0 +1,70 @@
+---
+title: "View and edit your profile in the AutoZone ITLA app"
+description: "See your photo, name, email, role, and group on the Mi Perfil screen, and update your profile photo from your device camera or gallery."
+---
+
+The Mi Perfil screen gives you a snapshot of your account information and lets you update your profile photo without leaving the app. You need to be logged in to access it — profile data is fetched from the server using your session token.
+
+<Note>
+  Mi Perfil requires an active login session. If you are not signed in, the app redirects you to the login screen first.
+</Note>
+
+## What your profile shows
+
+When the screen loads, the app calls `GET /perfil` and displays the following fields from the `UserProfile` model:
+
+| Field | Description |
+|---|---|
+| **foto** (`fotoUrl`) | Your profile photo, shown as a circular avatar at the top |
+| **nombre** | Your first name |
+| **apellido** | Your last name |
+| **correo** | Your email address, shown below your name |
+| **matricula** | Your ITLA student ID number |
+| **rol** | Your assigned role in the system |
+| **grupo** | Your assigned group |
+
+Your full name (`nombre` + `apellido`) and `correo` appear in the header banner. Your `matricula`, `grupo`, and `rol` are listed as info tiles below.
+
+## Read-only fields
+
+All profile fields are read-only — the screen does not include a form for editing your name, email, or other text data. The only thing you can change directly from this screen is your profile photo.
+
+## Updating your profile photo
+
+Tap your photo (or the camera icon that overlays it) to replace it. The app opens your device gallery via `image_picker`, lets you choose an image, and uploads it automatically.
+
+<Steps>
+  <Step title="Tap your profile photo">
+    On the Mi Perfil screen, tap the circular avatar at the top. A camera icon in the bottom-right corner of the avatar indicates it is tappable.
+  </Step>
+  <Step title="Select a photo from your gallery">
+    Your device gallery opens. Choose the image you want to use as your profile photo.
+  </Step>
+  <Step title="Wait for the upload to complete">
+    The app sends the image to `POST /perfil/foto` as a `multipart/form-data` request with a `foto` field. Once the upload succeeds, the screen refreshes and your new photo appears immediately.
+  </Step>
+</Steps>
+
+The upload request uses this structure:
+
+```http
+POST /perfil/foto
+Content-Type: multipart/form-data
+
+foto: <image file>
+```
+
+On success, the server returns a `fotoUrl` with the URL of your new photo.
+
+<Note>
+  The server automatically compresses uploaded images to a maximum of 100 KB. You can upload images up to 20 MB — no manual resizing needed.
+</Note>
+
+## Other options on this screen
+
+The Mi Perfil screen also gives you access to app-level settings:
+
+- **Modo Oscuro** — toggle between light and dark theme
+- **Idioma** — switch the app language between Español and English
+- **Acerca De** — navigate to the About screen with development team info
+- **Logout** (top-right icon) — end your session and return to the login screen

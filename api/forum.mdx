@@ -1,0 +1,135 @@
+---
+title: "Forum API — public topics and authenticated posting"
+description: "Read forum topics publicly, create topics and replies when authenticated. Endpoints split between /publico/foro (open) and /foro (requires Bearer token)."
+---
+
+The forum API is split into public and authenticated endpoints. Anyone can read topics and replies via `/publico/foro`. Creating topics and posting replies requires a Bearer token.
+
+---
+
+## Public endpoints (no auth required)
+
+### GET /publico/foro
+
+List all open forum topics with author, associated vehicle, photo, and reply count.
+
+```bash
+curl https://taller-itla.ia3x.com/api/publico/foro
+```
+
+**Response `200`** — array of topic objects
+
+<ResponseField name="id" type="integer">Topic ID</ResponseField>
+<ResponseField name="titulo" type="string">Topic title</ResponseField>
+<ResponseField name="autor" type="string">Author's name</ResponseField>
+<ResponseField name="vehiculo" type="string">Associated vehicle description</ResponseField>
+<ResponseField name="vehiculoFoto" type="string">Vehicle photo URL</ResponseField>
+<ResponseField name="fecha" type="string">Date posted</ResponseField>
+<ResponseField name="totalRespuestas" type="integer">Number of replies</ResponseField>
+
+---
+
+### GET /publico/foro/detalle?id=
+
+Get a single topic with all its replies.
+
+<ParamField query="id" type="integer" required>Topic ID</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/publico/foro/detalle?id=7"
+```
+
+**Response `200`**
+
+<ResponseField name="id" type="integer">Topic ID</ResponseField>
+<ResponseField name="titulo" type="string">Title</ResponseField>
+<ResponseField name="descripcion" type="string">Full topic body</ResponseField>
+<ResponseField name="autor" type="string">Author name</ResponseField>
+<ResponseField name="fecha" type="string">Date posted</ResponseField>
+<ResponseField name="respuestas" type="array">
+  Array of reply objects — each with `autor`, `contenido`, `fecha`
+</ResponseField>
+
+---
+
+## Authenticated endpoints
+
+<Note>
+The following endpoints require `Authorization: Bearer YOUR_TOKEN`.
+</Note>
+
+### GET /foro/temas
+
+List all forum topics (authenticated view, same shape as the public endpoint).
+
+```bash
+curl https://taller-itla.ia3x.com/api/foro/temas \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+### GET /foro/mis-temas
+
+List only the topics created by the authenticated user, with recent activity.
+
+```bash
+curl https://taller-itla.ia3x.com/api/foro/mis-temas \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+### GET /foro/detalle?id=
+
+Get a topic with replies (authenticated version).
+
+<ParamField query="id" type="integer" required>Topic ID</ParamField>
+
+---
+
+### POST /foro/crear
+
+Create a new forum topic. The vehicle associated must have a photo uploaded.
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id":5,"titulo":"Cambio de aceite cada cuántos km?","descripcion":"Mi Toyota Corolla 2020 lleva 8000 km..."}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/foro/crear \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"vehiculo_id":5,"titulo":"Cambio de aceite cada cuantos km?","descripcion":"Mi Toyota Corolla 2020 lleva 8000 km..."}'
+```
+
+<Warning>
+The vehicle must have a photo before you can create a topic. Upload one via `POST /vehiculos/foto` first.
+</Warning>
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Topic created |
+| `400` | Missing fields or vehicle has no photo |
+| `401` | Unauthorized |
+
+---
+
+### POST /foro/responder
+
+Post a reply to an existing topic.
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"tema_id":7,"contenido":"Recomiendo cambiarlo cada 5000 km con aceite sintético."}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/foro/responder \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"tema_id":7,"contenido":"Recomiendo cambiarlo cada 5000 km con aceite sintetico."}'
+```
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Reply posted |
+| `400` | Missing tema_id or contenido |
+| `401` | Unauthorized |

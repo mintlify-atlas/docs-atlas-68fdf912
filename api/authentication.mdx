@@ -1,0 +1,153 @@
+---
+title: "Authentication endpoints — register, login, refresh"
+description: "Register, activate, log in, refresh tokens, and reset passwords via the AutoZone ITLA auth endpoints. All calls use the datax form-encoded convention."
+---
+
+The AutoZone ITLA API uses JWT Bearer tokens for authentication. The flow starts with registration using your ITLA student ID, followed by account activation where you set a password, and then standard login. All auth endpoints are public — no token is required to call them.
+
+<Note>
+All POST bodies must wrap JSON in the `datax` form field. See [API Overview](/api/overview) for details.
+</Note>
+
+---
+
+## POST /auth/registro
+
+Register a new account using your ITLA student ID (`matricula`). Returns a **temporary token** to use in the activation step.
+
+**Request**
+
+<ParamField body="datax" type="string" required>
+  JSON-encoded object: `{"matricula": "20240096"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/registro \
+  -d 'datax={"matricula":"20240096"}'
+```
+
+**Response `201`**
+
+<ResponseField name="data.id" type="integer">User ID</ResponseField>
+<ResponseField name="data.matricula" type="string">Student ID</ResponseField>
+<ResponseField name="data.nombre" type="string">First name</ResponseField>
+<ResponseField name="data.apellido" type="string">Last name</ResponseField>
+<ResponseField name="data.correo" type="string">Email address</ResponseField>
+<ResponseField name="data.token" type="string">Temporary token — use this in `/auth/activar`</ResponseField>
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Registered, pending activation |
+| `400` | Matricula is required |
+| `404` | Matricula not found |
+| `409` | Account already activated |
+
+---
+
+## POST /auth/activar
+
+Activate your account by setting a password (minimum 6 characters). Pass the **temporary token** received from `/auth/registro` inside the `datax` JSON. Returns permanent `token` and `refreshToken`.
+
+**Request**
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"token": "eyJ...", "contrasena": "miClave123"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/activar \
+  -d 'datax={"token":"eyJ...","contrasena":"miClave123"}'
+```
+
+**Response `200`**
+
+<ResponseField name="data.token" type="string">Permanent access token</ResponseField>
+<ResponseField name="data.refreshToken" type="string">Refresh token for renewing access</ResponseField>
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Account activated |
+| `400` | Password required or fewer than 6 characters |
+| `409` | Account already activated |
+
+---
+
+## POST /auth/login
+
+Log in with your matricula and password. Returns user profile data plus `token` and `refreshToken`.
+
+**Request**
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"matricula": "20240096", "contrasena": "miClave123"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/login \
+  -d 'datax={"matricula":"20240096","contrasena":"miClave123"}'
+```
+
+**Response `200`**
+
+<ResponseField name="data.id" type="integer">User ID</ResponseField>
+<ResponseField name="data.nombre" type="string">First name</ResponseField>
+<ResponseField name="data.apellido" type="string">Last name</ResponseField>
+<ResponseField name="data.correo" type="string">Email address</ResponseField>
+<ResponseField name="data.fotoUrl" type="string">Profile photo URL or default avatar</ResponseField>
+<ResponseField name="data.token" type="string">Access token — include in `Authorization: Bearer` header</ResponseField>
+<ResponseField name="data.refreshToken" type="string">Use to renew the access token</ResponseField>
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Login successful |
+| `401` | Wrong credentials or account not activated |
+
+---
+
+## POST /auth/refresh
+
+Renew an expired access token using your `refreshToken`.
+
+**Request**
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"refreshToken": "eyJ..."}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/refresh \
+  -d 'datax={"refreshToken":"eyJ..."}'
+```
+
+**Response `200`**
+
+<ResponseField name="data.token" type="string">New access token</ResponseField>
+<ResponseField name="data.refreshToken" type="string">New refresh token</ResponseField>
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Tokens renewed |
+| `401` | Invalid or expired refresh token |
+
+---
+
+## POST /auth/olvidar
+
+Reset a forgotten password. The account's password is reset to `123456`. The user should log in with this temporary password immediately after the reset.
+
+**Request**
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"matricula": "20240096"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/olvidar \
+  -d 'datax={"matricula":"20240096"}'
+```
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Temporary password assigned (`123456`) |
+| `400` | User not registered or not activated |
+| `404` | Matricula not found |

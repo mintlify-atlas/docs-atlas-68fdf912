@@ -1,0 +1,113 @@
+---
+title: "Install and configure AutoZone ITLA for Android development"
+description: "Install AutoZone ITLA on your Android device, meet the Flutter SDK requirements, and understand how the app is structured before you run it for the first time."
+---
+
+AutoZone ITLA is a Flutter 3.22 Android app that connects to the REST API at `https://taller-itla.ia3x.com/api`. It manages vehicles, maintenance records, fuel logs, tire status, expenses, and community features — all behind a single binary you can sideload from an APK or build yourself from source.
+
+## Requirements
+
+Before building or running the app, make sure your environment meets these minimum versions:
+
+| Requirement | Minimum version |
+|-------------|----------------|
+| Flutter SDK | 3.22.0 |
+| Dart SDK | 3.3.0 |
+| Android target | Android 5.0 (API 21) or later |
+
+<Note>
+  The app targets Android only. iOS builds are not supported by this project.
+</Note>
+
+## Installation
+
+<Steps>
+  <Step title="Install Flutter">
+    Download and install the Flutter SDK from [flutter.dev](https://flutter.dev/docs/get-started/install). Verify your installation:
+
+    ```bash
+    flutter doctor
+    ```
+
+    All required entries should show a green checkmark before continuing.
+  </Step>
+  <Step title="Clone the repository">
+    ```bash
+    git clone https://github.com/Hidalgo15/ProyectoFinalMovil.git
+    cd ProyectoFinalMovil/project
+    ```
+  </Step>
+  <Step title="Install dependencies">
+    ```bash
+    flutter pub get
+    ```
+
+    This downloads all packages listed in `pubspec.yaml`, including Riverpod, Dio, go_router, and the rest of the dependency tree.
+  </Step>
+  <Step title="Generate code">
+    Several packages — Riverpod, Freezed, and json_serializable — rely on build_runner to produce `.g.dart` and `.freezed.dart` files. Run the generator once before your first build:
+
+    ```bash
+    dart run build_runner build --delete-conflicting-outputs
+    ```
+  </Step>
+  <Step title="Run the app">
+    Connect an Android device or start an emulator, then:
+
+    ```bash
+    flutter run
+    ```
+
+    For a release APK:
+
+    ```bash
+    flutter build apk --release
+    ```
+
+    The output APK is written to `build/app/outputs/flutter-apk/app-release.apk`.
+  </Step>
+</Steps>
+
+## Key dependencies
+
+The app is built on these core packages (versions from `pubspec.yaml`):
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `flutter_riverpod` | ^2.5.1 | State management |
+| `riverpod_annotation` | ^2.3.5 | Code-generation annotations for Riverpod |
+| `dio` | ^5.4.3+1 | HTTP client for API requests |
+| `go_router` | ^14.2.0 | Declarative navigation |
+| `flutter_secure_storage` | ^9.2.2 | Encrypted token storage |
+| `shared_preferences` | ^2.2.3 | Lightweight key-value storage |
+| `freezed_annotation` | ^2.4.4 | Immutable data classes |
+| `json_annotation` | ^4.9.0 | JSON serialization |
+| `image_picker` | ^1.1.2 | Camera and gallery access |
+| `cached_network_image` | ^3.3.1 | Image caching |
+| `carousel_slider` | ^5.0.0 | Image carousels in the dashboard |
+| `infinite_scroll_pagination` | ^4.0.0 | Paginated list views |
+
+Dev-only tooling includes `build_runner`, `freezed`, `json_serializable`, `riverpod_generator`, and `riverpod_lint`.
+
+## API base URL
+
+All network requests go to:
+
+```
+https://taller-itla.ia3x.com/api
+```
+
+This value is defined in `lib/core/constants/app_constants.dart` as `AppConstants.baseUrl` and referenced by the Dio client configured in `lib/core/api/api_client.dart`. The client sets a 15-second timeout for both connection and response.
+
+<Tip>
+  To point the app at a different backend during development, update `AppConstants.baseUrl` and regenerate any affected providers with `build_runner`.
+</Tip>
+
+## App configuration highlights
+
+The app is configured through `lib/app.dart` and `lib/core/settings/settings_provider.dart`:
+
+- **Dark mode** — the app reads a `isDarkMode` setting and switches between `AppTheme.lightTheme` and `AppTheme.darkTheme` at runtime. Users can toggle this from within the app without restarting.
+- **Localization** — Spanish (`es`) and English (`en`) are both supported via `AppLocalizations`. The active locale is stored in settings and applied on startup.
+- **State management** — the entire widget tree is wrapped in a `ProviderScope`, making all Riverpod providers available app-wide from `main.dart`.
+- **App icon** — the launcher icon uses an adaptive icon with a `#D32F2F` red background.

@@ -1,0 +1,76 @@
+---
+title: "Monitor tire status and punctures in AutoZone ITLA"
+description: "See the condition of every tire by axle and position, update status as tires wear, and log puncture incidents with a description and date."
+---
+
+The Tires section (Estado de Gomas) gives you a live view of every tire on your vehicle. Each tire is identified by its axle (`eje`) and position (`posicion`) on that axle, making it easy to track wear and incidents wheel by wheel. The number of tires shown matches the `cantidadRuedas` you set when you registered the vehicle.
+
+## How tire positions work
+
+Each tire record has two positioning fields:
+
+- **`eje`** — the axle the tire belongs to (e.g. "delantero" for front axle, "trasero" for rear axle)
+- **`posicion`** — the side on that axle (e.g. "izquierdo", "derecho")
+
+Together, `eje` and `posicion` uniquely identify a wheel. The list screen shows this combination in the subtitle of each tile, for example: "Eje: delantero • Estado: BUENA".
+
+## Tire status values
+
+Each tire carries one of four status values:
+
+| Status | Meaning | Color indicator |
+|---|---|---|
+| `buena` | Tire is in good condition | Green |
+| `regular` | Tire shows some wear; monitor closely | Orange |
+| `mala` | Tire is in poor condition; replace soon | Red |
+| `reemplazada` | Tire has been replaced | Blue |
+
+The colored dot on the left side of each tire card reflects the current status at a glance.
+
+## Updating a tire's status
+
+<Steps>
+  <Step title="Open the tire card">
+    On the Estado de Gomas screen, tap a tire card to expand it. The card shows the current `posicion`, `eje`, and `estado`.
+  </Step>
+  <Step title="Tap Estado">
+    Tap the **Estado** button inside the expanded card. A dialog opens listing all four status options: BUENA, REGULAR, MALA, and REEMPLAZADA.
+  </Step>
+  <Step title="Select the new status">
+    Tap the status that reflects the tire's current condition. The dialog closes, the update is sent to the server immediately, and the card's color indicator refreshes.
+  </Step>
+</Steps>
+
+<Warning>
+  Status changes take effect immediately and are not reversible through the app. If you select the wrong status, simply open the card again and set the correct one.
+</Warning>
+
+## Logging a puncture
+
+You can record a puncture (pinchazo) on any tire without changing its status. Punctures are stored as a history log attached to the specific tire.
+
+<Steps>
+  <Step title="Expand the tire card">
+    Tap the card for the affected tire to expand it.
+  </Step>
+  <Step title="Tap Pinchazo">
+    Tap the **Pinchazo** button (orange). A dialog opens with two fields: **Descripción** and **Fecha**.
+  </Step>
+  <Step title="Describe the incident">
+    Enter a short description in **Descripción** — for example, "Clavo en la vía principal" or "Pinchazo por objeto en autopista".
+  </Step>
+  <Step title="Confirm or change the date">
+    The **Fecha** field pre-fills with today's date. Tap it to open a date picker if the puncture happened on a different day.
+  </Step>
+  <Step title="Save the puncture">
+    Tap **Registrar**. The puncture is saved and appears in the incident history at the bottom of the expanded tile.
+  </Step>
+</Steps>
+
+## Viewing puncture history
+
+When a tire has one or more recorded punctures, the expanded card shows a **Historial de Pinchazos** section below the action buttons. Each entry lists the `descripcion` and `fecha` of the incident.
+
+<Tip>
+  After replacing a tire, update its status to `reemplazada` and log a final puncture entry if the replacement was triggered by a flat. This keeps your history accurate if you ever sell the vehicle or review records later.
+</Tip>

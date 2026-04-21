@@ -1,0 +1,131 @@
+---
+title: "Vehicles API — list, create, edit, and detail endpoints"
+description: "List, create, edit, and retrieve vehicles and their financial summaries. All endpoints require a Bearer token. Supports photo upload via multipart/form-data."
+---
+
+The vehicles endpoints let you manage the fleet of vehicles associated with the authenticated user. You can list vehicles with pagination and filtering, register new ones with an optional photo, view a detailed financial summary, and update vehicle data or photos.
+
+<Note>
+All vehicle endpoints require authentication. Include `Authorization: Bearer YOUR_TOKEN` in every request.
+</Note>
+
+---
+
+## GET /vehiculos
+
+List the authenticated user's vehicles. Supports pagination and filtering by brand and model.
+
+**Query parameters**
+
+<ParamField query="marca" type="string">Filter by vehicle brand (partial match)</ParamField>
+<ParamField query="modelo" type="string">Filter by model (partial match)</ParamField>
+<ParamField query="page" type="integer">Page number (default: 1)</ParamField>
+<ParamField query="limit" type="integer">Items per page (default: 20)</ParamField>
+
+```bash
+curl https://taller-itla.ia3x.com/api/vehiculos?marca=Toyota&page=1 \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of vehicle objects
+
+<ResponseField name="id" type="integer">Vehicle ID</ResponseField>
+<ResponseField name="marca" type="string">Brand (e.g. Toyota)</ResponseField>
+<ResponseField name="modelo" type="string">Model</ResponseField>
+<ResponseField name="anio" type="integer">Year</ResponseField>
+<ResponseField name="placa" type="string">License plate</ResponseField>
+<ResponseField name="chasis" type="string">Chassis number</ResponseField>
+<ResponseField name="cantidad_ruedas" type="integer">Number of wheels</ResponseField>
+<ResponseField name="foto_url" type="string">Photo URL (nullable)</ResponseField>
+<ResponseField name="fecha_registro" type="string">Registration date</ResponseField>
+
+---
+
+## POST /vehiculos
+
+Register a new vehicle. Send vehicle data in `datax` and an optional photo.
+
+**Request** (`multipart/form-data`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"marca":"Toyota","modelo":"Corolla","anio":2020,"placa":"A123456","chasis":"1HGBH41JXMN109186","cantidadRuedas":4}`
+</ParamField>
+<ParamField body="foto" type="file">Optional vehicle photo (up to 20 MB; compressed to 100 KB server-side)</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/vehiculos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F 'datax={"marca":"Toyota","modelo":"Corolla","anio":2020,"placa":"A123456","chasis":"1HGBH41JXMN109186","cantidadRuedas":4}' \
+  -F "foto=@/path/to/photo.jpg"
+```
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Vehicle created |
+| `400` | Missing required fields |
+| `401` | Unauthorized |
+
+---
+
+## GET /vehiculos/detalle?id=
+
+Get full vehicle details including a **financial summary** of all associated records.
+
+<ParamField query="id" type="integer" required>Vehicle ID</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/vehiculos/detalle?id=5" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`**
+
+<ResponseField name="id" type="integer">Vehicle ID</ResponseField>
+<ResponseField name="marca" type="string">Brand</ResponseField>
+<ResponseField name="modelo" type="string">Model</ResponseField>
+<ResponseField name="anio" type="integer">Year</ResponseField>
+<ResponseField name="placa" type="string">License plate</ResponseField>
+<ResponseField name="chasis" type="string">Chassis number</ResponseField>
+<ResponseField name="cantidadRuedas" type="integer">Number of wheels</ResponseField>
+<ResponseField name="fotoUrl" type="string">Photo URL</ResponseField>
+<ResponseField name="resumen.totalMantenimientos" type="number">Sum of maintenance costs (RD$)</ResponseField>
+<ResponseField name="resumen.totalCombustible" type="number">Sum of fuel/oil costs (RD$)</ResponseField>
+<ResponseField name="resumen.totalGastos" type="number">Sum of expenses (RD$)</ResponseField>
+<ResponseField name="resumen.totalIngresos" type="number">Sum of income (RD$)</ResponseField>
+<ResponseField name="resumen.balance" type="number">ingresos − (mantenimientos + combustible + gastos)</ResponseField>
+
+---
+
+## POST /vehiculos/editar
+
+Update vehicle data. Send only the fields you want to change.
+
+<ParamField body="datax" type="string" required>
+  JSON with `id` plus any fields to update: `{"id":5,"marca":"Honda","modelo":"Civic"}`
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/vehiculos/editar \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"id":5,"marca":"Honda","modelo":"Civic","anio":2021}'
+```
+
+---
+
+## POST /vehiculos/foto
+
+Replace a vehicle's photo.
+
+**Request** (`multipart/form-data`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id": 5}`
+</ParamField>
+<ParamField body="foto" type="file" required>New vehicle photo</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/vehiculos/foto \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F 'datax={"vehiculo_id":5}' \
+  -F "foto=@/path/to/new_photo.jpg"
+```

@@ -1,0 +1,170 @@
+---
+title: "Register, activate your account, and sign in to AutoZone"
+description: "Register with your ITLA student ID, activate your account with a temporary token, and sign in to receive the JWT and refresh token that unlock the full app."
+---
+
+AutoZone ITLA uses a three-step authentication flow: registration, account activation, and login. You first submit your ITLA student ID (`matricula`) to create an account. The API returns a temporary activation token directly in the response. You then exchange that token — along with a new password — for a permanent session. After that, every login returns a JWT access token and a refresh token that the app stores securely and attaches to all authenticated requests.
+
+## Registration
+
+Send your `matricula` to register. The API creates a pending account and returns a temporary token directly in the response body.
+
+<Steps>
+  <Step title="Submit your matricula">
+    Call `POST /auth/registro` with your ITLA student ID:
+
+    ```bash
+    curl -X POST https://taller-itla.ia3x.com/api/auth/registro \
+      -F 'datax={"matricula":"2021-0001"}'
+    ```
+
+    A successful response returns the temporary token:
+
+    ```json
+    {
+      "success": true,
+      "message": "Registro exitoso",
+      "data": {
+        "id": 42,
+        "matricula": "2021-0001",
+        "nombre": "Juan",
+        "apellido": "Perez",
+        "token": "<temporary-activation-token>"
+      }
+    }
+    ```
+  </Step>
+  <Step title="Copy your temporary token">
+    Copy the `token` value from the response — you will need it in the next step to activate your account.
+  </Step>
+  <Step title="Activate your account">
+    Call `POST /auth/activar` with the token from your email and the password you want to set (minimum 6 characters):
+
+    ```bash
+    curl -X POST https://taller-itla.ia3x.com/api/auth/activar \
+      -F 'datax={"token":"<activation-token>","contrasena":"mypassword"}'
+    ```
+
+    A successful response:
+
+    ```json
+    {
+      "success": true,
+      "message": "Cuenta activada exitosamente. Ya puedes iniciar sesión."
+    }
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  All POST request bodies must be form-encoded with the JSON payload inside a field named `datax`. Sending raw JSON in the request body will not work.
+</Warning>
+
+## Login
+
+Once your account is active, authenticate with your matricula and password:
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/login \
+  -F 'datax={"matricula":"2021-0001","contrasena":"mypassword"}'
+```
+
+A successful login returns user details alongside both tokens:
+
+```json
+{
+  "success": true,
+  "message": "Login exitoso",
+  "data": {
+    "id": 42,
+    "matricula": "2021-0001",
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "correo": "juan.perez@itla.edu.do",
+    "fotoUrl": "https://taller-itla.ia3x.com/uploads/perfil/42.jpg",
+    "token": "<jwt-access-token>",
+    "refreshToken": "<jwt-refresh-token>"
+  }
+}
+```
+
+The app stores `token` and `refreshToken` immediately after a successful login (see [Token storage](#token-storage)).
+
+## Token refresh
+
+Access tokens expire. When a request returns `401 Unauthorized`, the app automatically attempts a token refresh before retrying the original request:
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/refresh \
+  -F 'datax={"refreshToken":"<jwt-refresh-token>"}'
+```
+
+A successful response returns new tokens in the same shape as the login response `data` field:
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "<new-jwt-access-token>",
+    "refreshToken": "<new-jwt-refresh-token>"
+  }
+}
+```
+
+<Note>
+  This refresh logic runs automatically inside `AuthInterceptor` (`lib/core/api/auth_interceptor.dart`). If the refresh fails or no refresh token is stored, the app clears all stored credentials and signs you out.
+</Note>
+
+## Password recovery
+
+If you forget your password, call `POST /auth/olvidar` with your matricula. The API resets your password to the temporary value `123456`:
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/auth/olvidar \
+  -F 'datax={"matricula":"2021-0001"}'
+```
+
+After the reset, log in with `123456` as your password. Change it immediately by re-activating or contacting support, as the temporary password is the same for all recoveries.
+
+## Token storage
+
+The app uses `flutter_secure_storage` to persist credentials in the device's encrypted keystore. Three keys are written after a successful login or token refresh:
+
+| Key | Contents |
+|-----|----------|
+| `token` | JWT access token |
+| `refreshToken` | JWT refresh token |
+| `user_data` | JSON-encoded user profile |
+
+These key names are defined in `AppConstants` (`lib/core/constants/app_constants.dart`). The local data source that manages reads and writes lives in `lib/features/auth/data/auth_local_datasource.dart`. Calling logout — or a failed token refresh — invokes `FlutterSecureStorage.deleteAll()`, which removes all three entries at once.
+
+## Bearer header
+
+Every authenticated request includes the access token as a Bearer header. The `AuthInterceptor` in `lib/core/api/auth_interceptor.dart` reads the stored token and attaches it before each request:
+
+```
+Authorization: Bearer <jwt-access-token>
+```
+
+You do not need to set this header manually — the Dio client handles it automatically for all requests made through the app.
+
+## Error handling
+
+<CardGroup cols={2}>
+  <Card title="Invalid matricula" icon="circle-xmark">
+    Registration returns `success: false` with a message if the matricula is not recognized. Show the message to the user and ask them to verify their student ID.
+  </Card>
+  <Card title="Invalid activation token" icon="key">
+    Activation returns `success: false` if the token is wrong or expired. The user must restart the registration flow to receive a new token.
+  </Card>
+  <Card title="Wrong credentials" icon="lock">
+    Login returns `success: false` with an error message for incorrect matricula or password. The `AuthStateNotifier` surfaces this as an error state to the UI.
+  </Card>
+  <Card title="Expired session" icon="clock">
+    A `401` on any authenticated endpoint triggers an automatic refresh. If refresh also fails, the user is signed out and redirected to the login screen.
+  </Card>
+</CardGroup>
+
+<Tip>
+  During development, check the Dio `LogInterceptor` output in your console — it logs full request bodies, response bodies, and errors, making it easy to trace auth issues.
+</Tip>

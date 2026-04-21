@@ -1,0 +1,102 @@
+---
+title: "News, videos, and public vehicle catalog API endpoints"
+description: "Fetch automotive news articles, YouTube educational videos, and the public vehicle catalog. All three endpoint groups are public — no token required."
+---
+
+These three read-only endpoints provide public content for the app's discovery features. No authentication is required for any of them.
+
+---
+
+## News
+
+### GET /noticias
+
+Retrieve the latest 10 automotive news articles.
+
+```bash
+curl https://taller-itla.ia3x.com/api/noticias
+```
+
+**Response `200`** — array of news articles
+
+<ResponseField name="id" type="string">Article ID</ResponseField>
+<ResponseField name="titulo" type="string">Article title</ResponseField>
+<ResponseField name="resumen" type="string">Short summary shown in the list view</ResponseField>
+<ResponseField name="imagenUrl" type="string">Cover image URL</ResponseField>
+<ResponseField name="fecha" type="string">Publication date</ResponseField>
+
+---
+
+### GET /noticias/detalle?id=
+
+Get the full content of a news article, including HTML body.
+
+<ParamField query="id" type="string" required>Article ID</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/noticias/detalle?id=abc123"
+```
+
+**Response `200`**
+
+<ResponseField name="id" type="string">Article ID</ResponseField>
+<ResponseField name="titulo" type="string">Title</ResponseField>
+<ResponseField name="contenido" type="string">Full article body in HTML</ResponseField>
+<ResponseField name="imagenUrl" type="string">Cover image URL</ResponseField>
+<ResponseField name="fecha" type="string">Publication date</ResponseField>
+
+---
+
+## Videos
+
+### GET /videos
+
+Retrieve the educational YouTube video library.
+
+```bash
+curl https://taller-itla.ia3x.com/api/videos
+```
+
+**Response `200`** — array of video objects
+
+<ResponseField name="id" type="integer">Video ID</ResponseField>
+<ResponseField name="youtubeId" type="string">YouTube video ID — use to construct the embed or deep link</ResponseField>
+<ResponseField name="titulo" type="string">Video title</ResponseField>
+<ResponseField name="descripcion" type="string">Short description</ResponseField>
+<ResponseField name="categoria" type="string">Topic category (e.g. Mantenimiento, Motor)</ResponseField>
+<ResponseField name="url" type="string">Full YouTube URL</ResponseField>
+<ResponseField name="thumbnail" type="string">Thumbnail image URL</ResponseField>
+
+---
+
+## Catalog
+
+### GET /publico/vehiculos
+
+Search the public vehicle catalog with optional filters. Returns vehicles registered by all users on the platform.
+
+**Query parameters**
+
+<ParamField query="q" type="string">Free-text search across `marca`, `modelo`, and `placa`</ParamField>
+<ParamField query="marca" type="string">Filter by brand (e.g. Toyota)</ParamField>
+<ParamField query="modelo" type="string">Filter by model</ParamField>
+<ParamField query="page" type="integer">Page number (default: 1)</ParamField>
+<ParamField query="limit" type="integer">Items per page (default: 12)</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/publico/vehiculos?q=Toyota&page=1"
+```
+
+**Response `200`** — array of `CatalogoVehiculo` objects
+
+<ResponseField name="id" type="integer">Vehicle ID</ResponseField>
+<ResponseField name="placa" type="string">License plate</ResponseField>
+<ResponseField name="marca" type="string">Brand</ResponseField>
+<ResponseField name="modelo" type="string">Model</ResponseField>
+<ResponseField name="anio" type="integer">Year</ResponseField>
+<ResponseField name="cantidadRuedas" type="integer">Number of wheels</ResponseField>
+<ResponseField name="fechaRegistro" type="string">Date the vehicle was registered</ResponseField>
+<ResponseField name="ownerMatricula" type="string">Owner's ITLA student ID</ResponseField>
+<ResponseField name="fotoUrl" type="string">Vehicle photo URL (nullable)</ResponseField>
+<ResponseField name="owner" type="string">Owner's display name</ResponseField>
+<ResponseField name="ownerFotoUrl" type="string">Owner's profile photo URL (nullable)</ResponseField>

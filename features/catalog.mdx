@@ -1,0 +1,55 @@
+---
+title: "Browse and search the vehicle catalog in AutoZone ITLA"
+description: "Search the public catalog of registered vehicles by make, model, or plate — no login needed. Tap any entry to see the owner and full vehicle details."
+---
+
+The **Catálogo de Vehículos** is a public directory of vehicles registered in the AutoZone ITLA platform. You can search and filter the catalog to find specific vehicles, and tap any result to view its complete details. No account is required to use this section. The catalog is served from the `/publico/vehiculos` endpoint and supports `q`, `marca`, and `modelo` filters.
+
+## Browsing and filtering the catalog
+
+The catalog list loads the first page of vehicles automatically. Tap **Filtros de búsqueda** to expand the search panel and narrow results using any combination of filters:
+
+| Filter | Description |
+|---|---|
+| `q` | Free-text search across `marca`, `modelo`, and `placa` |
+| `marca` | Filter by vehicle make (e.g., Toyota, Honda) |
+| `modelo` | Filter by model name |
+
+Results update as you type in each field. The list paginates at 12 vehicles per page.
+
+Each entry in the list displays a card with:
+
+- `fotoUrl` — vehicle photo at 120 × 100 px on the left edge of the card
+- `marca` and `modelo` — shown together as the card title
+- `anio` and `placa` — displayed on the second line
+- `owner` — the registered owner's name in smaller grey text
+
+<Tip>
+  Use the `q` field for the fastest broad search. It matches against the plate, make, and model in a single query.
+</Tip>
+
+## Vehicle fields in the catalog
+
+Every `CatalogoVehiculo` entry returned by the API includes the following fields:
+
+| Field | Description |
+|---|---|
+| `id` | Unique vehicle identifier |
+| `placa` | License plate number |
+| `marca` | Vehicle make |
+| `modelo` | Vehicle model |
+| `anio` | Model year |
+| `cantidadRuedas` | Number of wheels |
+| `fechaRegistro` | Date the vehicle was registered in the system |
+| `ownerMatricula` | ITLA matricula of the registered owner |
+| `fotoUrl` | Vehicle photo URL |
+| `owner` | Owner's display name |
+| `ownerFotoUrl` | Owner's profile photo URL |
+
+## Vehicle detail
+
+Tap any card to open the **Detalle del Vehículo** screen, which loads the full record for that vehicle using its `id`.
+
+<Note>
+  The catalog is read-only and publicly accessible. Vehicles appear here because their owners have registered them in AutoZone ITLA — you cannot add or edit entries from the catalog view.
+</Note>

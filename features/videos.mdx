@@ -1,0 +1,51 @@
+---
+title: "Watch educational automotive videos in AutoZone ITLA"
+description: "Browse a curated YouTube video gallery covering vehicle maintenance, engine care, brake changes, and general tips — all playable inside the app."
+---
+
+The **Videos Educativos** section gives you a library of automotive how-to videos sourced from YouTube. You can browse the full gallery, filter by category at a glance, and watch any video without leaving the app. No login is required.
+
+## Video gallery
+
+Videos are displayed in a two-column grid. Each card shows the video's `thumbnail` as a full-width preview image with a play icon overlaid at the center, and below it the `titulo` and `categoria`. Tapping a card opens the in-app player.
+
+Each video in the gallery is represented by a `VideoItem` with the following fields:
+
+| Field | Description |
+|---|---|
+| `id` | Unique identifier for the video entry |
+| `youtubeId` | The YouTube video ID used to initialize the player |
+| `titulo` | Video title, shown on the card and in the player screen |
+| `descripcion` | Extended description shown below the player |
+| `categoria` | Topic category shown in the app's accent color |
+| `url` | Full YouTube URL for the video |
+| `thumbnail` | Preview image URL loaded from YouTube |
+
+## Watching a video
+
+Tap any card to open the **VideoPlayerScreen**. The `youtube_player_flutter` package initializes a `YoutubePlayerController` using the video's `youtubeId` and begins playback automatically. A red progress bar runs along the bottom of the player while the video plays.
+
+Below the player you can see the `titulo`, `categoria`, and full `descripcion` for the selected video.
+
+## Video categories
+
+The library covers four main areas of automotive education:
+
+<CardGroup cols={2}>
+  <Card title="Maintenance" icon="wrench">
+    General vehicle maintenance guidance and service schedules.
+  </Card>
+  <Card title="Engine care" icon="gear">
+    Tips on keeping the engine healthy, oil changes, and fluid checks.
+  </Card>
+  <Card title="Brake changes" icon="circle-stop">
+    Step-by-step walkthroughs for inspecting and replacing brake components.
+  </Card>
+  <Card title="General tips" icon="lightbulb">
+    Everyday driving recommendations and seasonal care advice.
+  </Card>
+</CardGroup>
+
+<Note>
+  The video section does not require a login. All content is publicly available and loads from the `/videos` endpoint on launch.
+</Note>

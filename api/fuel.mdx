@@ -1,0 +1,72 @@
+---
+title: "Fuel and oil API — log combustible and aceite entries"
+description: "Log and retrieve fuel stops and oil changes per vehicle. Filter by type (combustible or aceite). All endpoints require a Bearer token."
+---
+
+The fuel and oil endpoints track every fuel stop and oil change for a vehicle. Records are distinguished by `tipo` — either `combustible` for fuel or `aceite` for oil — and store the quantity, unit, and cost in Dominican pesos (RD$).
+
+<Note>
+All endpoints require `Authorization: Bearer YOUR_TOKEN`.
+</Note>
+
+---
+
+## GET /combustible
+
+List fuel and oil records for a vehicle.
+
+**Query parameters**
+
+<ParamField query="vehiculo_id" type="integer" required>Vehicle ID</ParamField>
+<ParamField query="tipo" type="string">Filter: `combustible` or `aceite`</ParamField>
+<ParamField query="page" type="integer">Page number</ParamField>
+<ParamField query="limit" type="integer">Items per page</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/combustible?vehiculo_id=5&tipo=combustible" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of records
+
+<ResponseField name="id" type="integer">Record ID</ResponseField>
+<ResponseField name="vehiculo_id" type="integer">Associated vehicle</ResponseField>
+<ResponseField name="tipo" type="string">`combustible` or `aceite`</ResponseField>
+<ResponseField name="cantidad" type="number">Quantity filled</ResponseField>
+<ResponseField name="unidad" type="string">Unit: `galones`, `litros`, or `qt`</ResponseField>
+<ResponseField name="monto" type="number">Amount paid in RD$</ResponseField>
+<ResponseField name="fecha" type="string">Date (ISO 8601)</ResponseField>
+
+---
+
+## POST /combustible
+
+Log a new fuel or oil entry.
+
+**Request** (`application/x-www-form-urlencoded`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"vehiculo_id":5,"tipo":"combustible","cantidad":10,"unidad":"galones","monto":850,"fecha":"2026-04-20"}`
+</ParamField>
+
+```bash
+# Log a fuel stop
+curl -X POST https://taller-itla.ia3x.com/api/combustible \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"vehiculo_id":5,"tipo":"combustible","cantidad":10,"unidad":"galones","monto":850,"fecha":"2026-04-20"}'
+
+# Log an oil change
+curl -X POST https://taller-itla.ia3x.com/api/combustible \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"vehiculo_id":5,"tipo":"aceite","cantidad":5,"unidad":"qt","monto":1200,"fecha":"2026-04-20"}'
+```
+
+<Tip>
+Valid unit values depend on type: for `combustible` use `galones` or `litros`; for `aceite` use `qt` or `litros`.
+</Tip>
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Record created |
+| `400` | Missing required fields or invalid tipo/unidad |
+| `401` | Unauthorized |

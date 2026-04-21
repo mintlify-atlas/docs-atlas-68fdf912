@@ -1,0 +1,72 @@
+---
+title: "Track vehicle maintenance records in AutoZone ITLA"
+description: "Log every service your vehicle receives — with type, cost, parts used, date, and up to five photos — and browse the full history at a glance."
+---
+
+The Maintenance section gives you a complete service history for each vehicle. Every time you take a car in for a checkup, oil change, brake job, or any other work, you can record what was done, what it cost, which parts were replaced, and attach photos of the job.
+
+## What a maintenance record contains
+
+Each record stores the following fields:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `vehiculo_id` | integer | yes | Set automatically from the vehicle you navigate from |
+| `tipo` | text | yes | Free-form description, e.g. "Cambio de aceite", "Cambio de frenos" |
+| `costo` | number | yes | Cost in RD$ |
+| `piezas` | text | no | Parts used during the service, e.g. "Filtro de aceite, aceite 5W-30" |
+| `fecha` | date | yes | Date the service was performed (YYYY-MM-DD) |
+| `fotos` | images | no | Up to 5 photos attached after saving |
+
+## Logging a new maintenance record
+
+Navigate to a vehicle's detail screen and tap **Ver Mantenimientos**, then tap the **+** button.
+
+<Steps>
+  <Step title="Enter the maintenance type">
+    Type a description in **Tipo de Mantenimiento**. This is a free-text field — write whatever describes the work, such as "Alineación y balanceo" or "Cambio de correa de distribución".
+  </Step>
+  <Step title="Enter the cost">
+    Type the amount in **Costo (RD$)**. The field only accepts numeric input. Decimal values are supported.
+  </Step>
+  <Step title="List parts used (optional)">
+    In **Piezas utilizadas**, enter the components replaced or consumed during the service. This field accepts multiple lines, so you can list each part on its own line.
+  </Step>
+  <Step title="Select the date">
+    Tap the **Fecha** field. A date picker opens — select the day the maintenance was performed and confirm. The date is stored in YYYY-MM-DD format.
+  </Step>
+  <Step title="Attach photos (optional)">
+    Tap the **+** tile in the photo section to open the gallery. You can attach up to 5 images. Each added photo appears as a thumbnail; tap the **×** on any thumbnail to remove it before saving.
+  </Step>
+  <Step title="Save the record">
+    Tap **Registrar Mantenimiento**. The app first saves the core record, then uploads any selected photos. You are returned to the maintenance list on success.
+  </Step>
+</Steps>
+
+<Note>
+  Photos are uploaded separately after the record is created. If the upload step fails, the record itself is still saved — you can re-attach photos later if needed.
+</Note>
+
+## Viewing the maintenance list
+
+The maintenance list screen shows all records for the selected vehicle in reverse-chronological order by default. Each card displays:
+
+- The **tipo** as the title
+- The **fecha** and **costo** (e.g. "2025-03-14 • RD$ 2500") as the subtitle
+
+Pull down to refresh the list. Tap any card to open its detail view.
+
+## Maintenance detail and photo gallery
+
+The detail screen shows the full record:
+
+- **Tipo** as the headline
+- **Fecha** below the headline
+- **Costo** with a currency indicator in RD$
+- **Piezas Utilizadas** (only shown when the field is not empty)
+
+If the record has attached photos, a carousel appears at the top of the screen. Swipe left and right to move between images. The carousel fills the full width of the screen at 250 px height.
+
+<Tip>
+  Before a big service, take a photo of the vehicle's odometer and include it in the maintenance record. This gives you a mileage reference for every entry without needing a separate odometer field.
+</Tip>

@@ -1,0 +1,89 @@
+---
+title: "Tires API — gomas status updates and puncture records"
+description: "Retrieve tire states per vehicle position, update individual tire status, and record puncture incidents. All endpoints require a Bearer token."
+---
+
+The tires endpoints manage the condition of each wheel on a vehicle. Every vehicle has tires tracked by axle (`eje`) and position (`posicion`). You can update the status of any tire and log puncture incidents with a description and date.
+
+<Note>
+All tire endpoints require `Authorization: Bearer YOUR_TOKEN`.
+</Note>
+
+---
+
+## GET /gomas
+
+Retrieve the current state of all tires for a vehicle.
+
+**Query parameters**
+
+<ParamField query="vehiculo_id" type="integer" required>Vehicle ID</ParamField>
+
+```bash
+curl "https://taller-itla.ia3x.com/api/gomas?vehiculo_id=5" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Response `200`** — array of tire objects
+
+<ResponseField name="id" type="integer">Tire record ID</ResponseField>
+<ResponseField name="vehiculo_id" type="integer">Associated vehicle</ResponseField>
+<ResponseField name="eje" type="string">Axle identifier (e.g. `delantero`, `trasero`)</ResponseField>
+<ResponseField name="posicion" type="string">Side on the axle (e.g. `izquierdo`, `derecho`)</ResponseField>
+<ResponseField name="estado" type="string">Current condition: `buena`, `regular`, `mala`, or `reemplazada`</ResponseField>
+
+---
+
+## POST /gomas/actualizar
+
+Update the status of a specific tire.
+
+**Request** (`application/x-www-form-urlencoded`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"goma_id": 12, "estado": "regular"}`
+</ParamField>
+
+Valid `estado` values: `buena`, `regular`, `mala`, `reemplazada`
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/gomas/actualizar \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"goma_id":12,"estado":"regular"}'
+```
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Status updated |
+| `400` | Invalid estado or missing goma_id |
+| `401` | Unauthorized |
+
+---
+
+## POST /gomas/pinchazos
+
+Record a puncture incident for a specific tire.
+
+**Request** (`application/x-www-form-urlencoded`)
+
+<ParamField body="datax" type="string" required>
+  JSON: `{"goma_id": 12, "descripcion": "Clavo en la autopista", "fecha": "2026-04-19"}`
+
+  | Field | Type | Required | Description |
+  |---|---|---|---|
+  | `goma_id` | integer | yes | ID of the tire that was punctured |
+  | `descripcion` | string | yes | Description of the incident |
+  | `fecha` | string | yes | Incident date (ISO 8601) |
+</ParamField>
+
+```bash
+curl -X POST https://taller-itla.ia3x.com/api/gomas/pinchazos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d 'datax={"goma_id":12,"descripcion":"Clavo en la autopista","fecha":"2026-04-19"}'
+```
+
+| Status | Meaning |
+|--------|---------|
+| `201` | Puncture recorded |
+| `400` | Missing required fields |
+| `401` | Unauthorized |
